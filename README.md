@@ -3,7 +3,8 @@
 **Author Name**:  Moh'd Saqr
 
 ## WRRC
-![6f4bf229-0451-4d83-84f1-5b76e9357043](https://user-images.githubusercontent.com/97642724/151713419-da11ef67-d86b-49e4-ab6e-50336e55036c.jpg)
+![1](https://user-images.githubusercontent.com/97642724/151884466-e0eaf774-aa46-476e-9013-97272d471411.jpg)
+
 
 
 ## Overview
@@ -11,6 +12,8 @@
 ## Getting Started
 * first run the server 
 * open the localhost:5000/
+* use the APIKEY
+* INSTALL AXIOS LABIRY
 
 ## Project Features
-# if the user mistake the url or enter page not accses it the server error show " something worg" not just reload the page . 
+# if the user mistake the url or enter page not accses it the server error show " something worg" not just reload the page  GET AND THE DATA FROM API SERVER AND  . 
