@@ -1,23 +1,39 @@
 `use strict`
 require(`dotenv`).config()
-
+const pg =require(`pg`)
+const client = new pg.Client(process.env.DATABASE_URL)
 const express = require(`express`)
 const cors = require(`cors`)
 const axios = require(`axios`)
 const server = express()
 server.use(cors())
+server.use(express.json())
+const port = process.env.PORT
 const data = require(`./Movie Data/data.json`)
+
 let URL =`https://api.themoviedb.org/3/trending/all/week?api_key=${process.env.APIKEY}`
 let URL2 = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.APIKEY}&language=en-US&query=The&page=2`
-server.listen(5000,()=>{
-console.log("server is starting");
+client.connect().then(()=>{
+ server.listen(port,() =>{
+  console.log(`the server is strarting  in port : ${port}`);
+ })
 })
 
-server.get(handelServerErroe)
+// server.listen(5000,()=>{
+// console.log("server is starting");
+// })
+
+
 server.get(`/search`,handelSearch)
 server.get(`/`,handelget)
 server.get(`/trending`,handelTranding)
 server.get(`/favorite`,favoriteHandel)
+server.get(`/The Fate of the Furious`,TheFateoftheFuriousHandel)
+server.get(`/The Deep House`,TheDeepHouseHandel)
+server.post(`/addMovie`,postHandel)
+server.get(`/getMovies`,getMoviesHandel)
+
+server.get(handelServerErroe)
 server.get(`*`, handelError)
 
 function handelget(req,res){
@@ -29,10 +45,8 @@ function favoriteHandel(req,res){
     res.status(200).send("Welcome to Favorite Page")
 }
 
-function handelError(req,res){
-    res.status(404).send("Sorry, something went wrong")
 
-}
+
 function handelServerErroe(req,res){
     res.status(500).send("Sorry, something went wrong in the server")
 }
@@ -44,49 +58,75 @@ function handelServerErroe(req,res){
             if(obj.id==634649){
                 let obj1= new Movis(obj.id,obj.title,obj.release_date,obj.poster_path,obj.overview); 
                 y=obj1
-            }
-            
+            }   
         });
-        // i use map method but i have this result if u show this code Ammar pleas comment the reson fo this result
-        // {
-        //     "id": 634649,
-        //     "title": "Spider-Man: No Way Home",
-        //     "release_date": "2021-12-15",
-        //     "poster_path": "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
-        //     "overview": "Peter Parker is unmasked and no longer able to separate his normal life from the high-stakes of being a super-hero. When he asks for help from Doctor Strange the stakes become even more dangerous, forcing him to discover what it truly means to be Spider-Man."
-        //   },
-        //   null,
-        //   null,
-        //   ......nulll
-    //     my code was :
-    //     let dt =data.data.results
-    //    let y= dt.mab(obj => {
-    //          if(obj.id==634649){
-    //              let obj1= new Movis(obj.id,obj.title,obj.release_date,obj.poster_path,obj.overview); 
-    //             return obj1
-    //          }
-             
-    //      });
-
   res.status(200).json(y)
     }).catch(err =>{
-
+        handelError(err,req,res)
     })
  }
  function handelSearch(req,res){
+    axios.get(URL2).then(data =>{
+        let dt =data.data.results
+  res.status(200).json(dt)
+    }).catch(err =>{
+        handelError(err,req,res)
+    })
+ }
+ function TheFateoftheFuriousHandel(req ,res){
     let y = []
     axios.get(URL2).then(data =>{
         let dt =data.data.results
        dt.filter(obj => {
-            if(obj.id==122917 || obj.id==337339 ){
+            if(obj.id==337339){
                 let obj1= new Movis(obj.id,obj.title,obj.release_date,obj.poster_path,obj.overview); 
                y.push (obj1)
             }
         });
   res.status(200).json(y)
     }).catch(err =>{
+        handelError(err,req,res)
+
     })
  }
+ function TheDeepHouseHandel (req ,res){
+    let y = []
+    axios.get(URL2).then(data =>{
+        let dt =data.data.results
+       dt.filter(obj => {
+            if(obj.id==672582){
+                let obj1= new Movis(obj.id,obj.title,obj.release_date,obj.poster_path,obj.overview); 
+               y.push (obj1)
+            }
+        });
+  res.status(200).json(y)
+    }).catch(err =>{
+        handelError(err,req,res)
+
+    })
+ }
+ function postHandel(req,res){
+const add =req.body
+let comment = `New movies Added: `
+ console.log(add);
+ let sql1 =`INSERT INTO famovis(title,overview,poster_path,release_date,comment) VALUES($1,$2,$3,$4,$5) RETURNING *;`
+ let values =[add.original_title,add.overview,add.poster_path,add.release_date,comment]
+ client.query(sql1,values).then(data1 =>{
+    res.status(200).json(data1.rows)
+}).catch(err=>{
+    handelError(err,req,res)
+})
+}
+
+function getMoviesHandel (req,res){
+    let sql =`SELECT * FROM famovis;`;
+    client.query(sql).then(data2 =>{
+        console.log(data2.rows);
+        res.status(200).json(data2.rows)
+    }).catch(err =>{
+        handelError(err,req,res)
+    })
+}
  
 
 function Movis(id,title,release_date,poster_path,overview){
@@ -95,4 +135,11 @@ function Movis(id,title,release_date,poster_path,overview){
     this.release_date=release_date
     this.poster_path =poster_path
     this.overview =overview
+}
+function handelError(error,req,res){
+    const err = {
+         status : 500,
+         messgae : error
+     }
+     res.status(500).send(err);
 }
