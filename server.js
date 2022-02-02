@@ -32,6 +32,12 @@ server.get(`/The Fate of the Furious`,TheFateoftheFuriousHandel)
 server.get(`/The Deep House`,TheDeepHouseHandel)
 server.post(`/addMovie`,postHandel)
 server.get(`/getMovies`,getMoviesHandel)
+server.put(`/UPDATE/:id`,handelUpdate)
+server.delete(`/DELETE/:id`,handelDelete)
+server.get(`/getByIdMovie/:id`,handelGetidMovis)
+
+
+
 
 server.get(handelServerErroe)
 server.get(`*`, handelError)
@@ -43,6 +49,39 @@ function handelget(req,res){
 
 function favoriteHandel(req,res){
     res.status(200).send("Welcome to Favorite Page")
+}
+function handelUpdate (req,res){
+const id = req.params.id
+const data = req.body
+console.log(data);
+// const sql = `UPDATE favRecipes SET title =$1, readyInMinutes = $2, summary = $3 ,vegetarian=$4, instructions=$5, sourceUrl =$6 WHERE id=$7 RETURNING *;`; 
+let sql =`UPDATE famovis SET title = $1 , overview =$2,poster_path=$3 , release_date=$4 , comment =$5 WHERE id=$6 RETURNING  *;`;
+values =[data.title,data.overview,data.poster_path,data.release_date,data.comment,id]
+client.query(sql,values).then(data =>{
+    res.status(200).json(data.rows)
+}).catch(err =>{
+    handelError(err,req,res)
+
+})
+}
+function handelDelete(req,res){
+const id =req.params.id
+let sql =`DELETE  FROM famovis WHERE id=${id}`
+client.query(sql).then(()=>{
+    res.status(200).send("the Movies was deleted successfully")
+}).catch(err =>{
+    handelError(err,req,res)
+})
+}
+function handelGetidMovis(req,res){
+const id =req.params.id
+let sql = `SELECT * FROM famovis WHERE id=${id}`
+client.query(sql).then(data=>{
+    res.status(200).json(data.rows)
+}).catch(err =>{
+    handelError(err,req,res)
+
+})
 }
 
 
