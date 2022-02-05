@@ -1,7 +1,11 @@
 `use strict`
 require(`dotenv`).config()
 const pg =require(`pg`)
-const client = new pg.Client(process.env.DATABASE_URL)
+// const client = new pg.Client(process.env.DATABASE_URL)
+const client = new pg.Client({
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false }
+})
 const express = require(`express`)
 const cors = require(`cors`)
 const axios = require(`axios`)
@@ -13,15 +17,13 @@ const data = require(`./Movie Data/data.json`)
 
 let URL =`https://api.themoviedb.org/3/trending/all/week?api_key=${process.env.APIKEY}`
 let URL2 = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.APIKEY}&language=en-US&query=The&page=2`
-// client.connect().then(()=>{
-//  server.listen(port,() =>{
-//   console.log(`the server is strarting  in port : ${port}`);
-//  })
-// })
 
-const client = new pg.Client({
-    connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
+ server.listen(port,() =>{
+  console.log(`the server is strarting  in port : ${port}`);
+ })
+
+
+
 
 // server.listen(5000,()=>{
 // console.log("server is starting");
