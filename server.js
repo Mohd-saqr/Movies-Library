@@ -43,15 +43,9 @@ server.get(`/getMovies`,getMoviesHandel)
 server.put(`/UPDATE/:id`,handelUpdate)
 server.delete(`/DELETE/:id`,handelDelete)
 server.get(`/getByIdMovie/:id`,handelGetidMovis)
-
-
-
-
 server.get(handelServerErroe)
 server.get(`*`, handelError)
-
 function handelget(req,res){
-
     return res.status(200).json(data)
 }
 
