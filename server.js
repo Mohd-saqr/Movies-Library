@@ -18,9 +18,11 @@ const data = require(`./Movie Data/data.json`)
 let URL =`https://api.themoviedb.org/3/trending/all/week?api_key=${process.env.APIKEY}`
 let URL2 = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.APIKEY}&language=en-US&query=The&page=2`
 
- server.listen(port,() =>{
-  console.log(`the server is strarting  in port : ${port}`);
- })
+client.connect().then(()=>{
+    server.listen(port,()=>{
+        console.log(`listining to port ${port}`)
+    })
+})
 
 
 
@@ -34,8 +36,8 @@ server.get(`/search`,handelSearch)
 server.get(`/`,handelget)
 server.get(`/trending`,handelTranding)
 server.get(`/favorite`,favoriteHandel)
-server.get(`/The Fate of the Furious`,TheFateoftheFuriousHandel)
-server.get(`/The Deep House`,TheDeepHouseHandel)
+server.get(`/TheFateoftheFurious`,TheFateoftheFuriousHandel)
+server.get(`/TheDeepHouse`,TheDeepHouseHandel)
 server.post(`/addMovie`,postHandel)
 server.get(`/getMovies`,getMoviesHandel)
 server.put(`/UPDATE/:id`,handelUpdate)
@@ -166,7 +168,7 @@ let comment = `New movies Added: `
 function getMoviesHandel (req,res){
     let sql =`SELECT * FROM famovis;`;
     client.query(sql).then(data2 =>{
-        console.log(data2.rows);
+        console.log(data2);
         res.status(200).json(data2.rows)
     }).catch(err =>{
         handelError(err,req,res)
