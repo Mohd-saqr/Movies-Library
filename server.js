@@ -1,11 +1,9 @@
 `use strict`
 require(`dotenv`).config()
 const pg =require(`pg`)
-// const client = new pg.Client(process.env.DATABASE_URL)
-const client = new pg.Client({
-    connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
-})
+const path = require(`path`)
+const client = new pg.Client(process.env.DATABASE_URL)
+
 const express = require(`express`)
 const cors = require(`cors`)
 const axios = require(`axios`)
@@ -24,9 +22,17 @@ client.connect().then(()=>{
     })
 })
 
+// const client = new pg.Client({
+//     connectionString: process.env.DATABASE_URL,
+//     ssl: { rejectUnauthorized: false }
+// })
 
-
-
+server.get('/g', function(req, res) {
+    res.sendFile(path.join(__dirname, './index.html'));
+  });
+  server.get('/js', function(req, res) {
+    res.sendFile(path.join(__dirname, './run.js'));
+  });
 // server.listen(5000,()=>{
 // console.log("server is starting");
 // })
