@@ -156,10 +156,9 @@ function handelServerErroe(req,res){
  }
  function postHandel(req,res){
 const add =req.body
-let comment = `New movies Added: `
  console.log(add);
  let sql1 =`INSERT INTO famovis(title,overview,poster_path,release_date,comment) VALUES($1,$2,$3,$4,$5) RETURNING *;`
- let values =[add.original_title,add.overview,add.poster_path,add.release_date,comment]
+ let values =[add.original_title,add.overview,add.poster_path,add.release_date,add.comment]
  client.query(sql1,values).then(data1 =>{
     res.status(200).json(data1.rows)
 }).catch(err=>{
