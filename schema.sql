@@ -3,7 +3,9 @@ CREATE TABLE IF NOT EXISTS famovis(
     id SERIAL PRIMARY KEY,
     title text,
     overview text,
-    poster_path varchar(256),
+    imgurl varchar(512),
     release_date varchar(256),
-    comment varchar(256)
+    rate float , 
+    lang varchar(256),
+    vot_count float
 );
