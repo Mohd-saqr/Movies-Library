@@ -6,6 +6,9 @@ const client = new pg.Client({
     connectionString: process.env.DATABASE_URL,
     ssl: { rejectUnauthorized: false }
 });
+// const client = new pg.Client(process.env.DATABASE_URL)
+
+
 const express = require(`express`)
 const cors = require(`cors`)
 const axios = require(`axios`)
@@ -17,17 +20,16 @@ const data = require(`./Movie Data/data.json`)
 
 let URL =`https://api.themoviedb.org/3/trending/all/week?api_key=${process.env.APIKEY}`
 let URL2 = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.APIKEY}&language=en-US&query=The&page=2`
-
+server.listen(5000,()=>{
+    console.log("server is starting");
+    })
 client.connect().then(()=>{
     server.listen(port,()=>{
         console.log(`listining to port ${port}`)
     })
 })
 
-// const client = new pg.Client({
-//     connectionString: process.env.DATABASE_URL,
-//     ssl: { rejectUnauthorized: false }
-// })
+
 
 server.get('/g', function(req, res) {
     res.sendFile(path.join(__dirname, './index.html'));
@@ -35,9 +37,6 @@ server.get('/g', function(req, res) {
   server.get('/js', function(req, res) {
     res.sendFile(path.join(__dirname, './run.js'));
   });
-// server.listen(5000,()=>{
-// console.log("server is starting");
-// })
 
 
 server.get(`/search`,handelSearch)
@@ -53,6 +52,7 @@ server.delete(`/DELETE/:id`,handelDelete)
 server.get(`/getByIdMovie/:id`,handelGetidMovis)
 server.get(handelServerErroe)
 server.get(`*`, handelError)
+server.post('/addAllMovies',handelAddAllMovie)
 function handelget(req,res){
     return res.status(200).json(data)
 }
@@ -83,6 +83,24 @@ client.query(sql).then(()=>{
     handelError(err,req,res)
 })
 }
+
+function handelAddAllMovie(req,res){
+ const add =req.body
+ add.forEach(element => {
+     console.log(element);
+    let sql1 =`INSERT INTO famovis(title,overview,poster_path,release_date,comment) VALUES($1,$2,$3,$4,$5) RETURNING *;`
+ let values =[element.original_title,element.overview,'https://image.tmdb.org/t/p/original'+element.poster_path,element.release_date,element.comment]
+    client.query(sql1,values).then(data1 =>{
+        
+          }).catch(err=>{
+              handelError(err,req,res)
+          })
+ });
+ res.status(200).json("ok")
+}
+
+
+
 function handelGetidMovis(req,res){
 const id =req.params.id
 let sql = `SELECT * FROM famovis WHERE id=${id}`
