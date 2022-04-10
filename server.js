@@ -43,6 +43,8 @@ server.get('/g', function(req, res) {
 server.get(`/search`,handelSearch)
 server.get(`/`,handelget)
 server.get(`/trending`,handelTranding)
+server.post('/addtrending',handelAddTrendeing)
+server.get('gettrending',getTrendingHandel)
 server.get(`/favorite`,favoriteHandel)
 server.get(`/TheFateoftheFurious`,TheFateoftheFuriousHandel)
 server.get(`/TheDeepHouse`,TheDeepHouseHandel)
@@ -97,6 +99,30 @@ function handelAddAllMovie(req,res){
           })
  });
  res.status(200).json("ok")
+}
+
+function handelAddTrendeing(req,res){
+    const add =req.body
+    add.forEach(element => {
+       let sql1 =`INSERT INTO trending(title,overview,imgurl,release_date,rate,lang,vot_count) VALUES($1,$2,$3,$4,$5,$6,$7) RETURNING *;`
+    let values =[element.original_title,element.overview,'https://image.tmdb.org/t/p/original'+element.poster_path,element.release_date,element.vote_average,element.original_language,element.vote_count]
+       client.query(sql1,values).then(data1 =>{
+           
+             }).catch(err=>{
+                 handelError(err,req,res)
+             })
+    });
+    res.status(200).json("ok")
+}
+
+function getTrendingHandel(req,res){
+    let sql =`SELECT * FROM trending;`;
+    client.query(sql).then(data2 =>{
+        console.log(data2);
+        res.status(200).json(data2.rows)
+    }).catch(err =>{
+        handelError(err,req,res)
+    })
 }
 
 
