@@ -2,11 +2,12 @@
 require(`dotenv`).config()
 const pg =require(`pg`)
 const path = require(`path`)
-const client = new pg.Client({
-    connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
-});
-// const client = new pg.Client(process.env.DATABASE_URL)
+// const client = new pg.Client({
+//     connectionString: process.env.DATABASE_URL,
+//     ssl: { rejectUnauthorized: false }
+// });
+
+const client = new pg.Client(process.env.DATABASE_URL)
 
 
 const express = require(`express`)
@@ -87,9 +88,8 @@ client.query(sql).then(()=>{
 function handelAddAllMovie(req,res){
  const add =req.body
  add.forEach(element => {
-     console.log(element);
-    let sql1 =`INSERT INTO famovis(title,overview,poster_path,release_date,comment) VALUES($1,$2,$3,$4,$5) RETURNING *;`
- let values =[element.original_title,element.overview,'https://image.tmdb.org/t/p/original'+element.poster_path,element.release_date,element.comment]
+    let sql1 =`INSERT INTO famovis(title,overview,imgurl,release_date,rate,lang,vot_count) VALUES($1,$2,$3,$4,$5,$6,$7) RETURNING *;`
+ let values =[element.original_title,element.overview,'https://image.tmdb.org/t/p/original'+element.poster_path,element.release_date,element.vote_average,element.original_language,element.vote_count]
     client.query(sql1,values).then(data1 =>{
         
           }).catch(err=>{
