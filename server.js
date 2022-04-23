@@ -90,8 +90,8 @@ client.query(sql).then(()=>{
 function handelAddAllMovie(req,res){
  const add =req.body
  add.forEach(element => {
-    let sql1 =`INSERT INTO famovis(title,overview,imgurl,release_date,rate,lang,vot_count) VALUES($1,$2,$3,$4,$5,$6,$7) RETURNING *;`
- let values =[element.original_title,element.overview,'https://image.tmdb.org/t/p/original'+element.poster_path,element.release_date,element.vote_average,element.original_language,element.vote_count]
+    let sql1 =`INSERT INTO famovis(title,overview,imgurl,release_date,rate,lang,vot_count,trailer,movieurl) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *;`
+ let values =[element.title,element.overview,'https://image.tmdb.org/t/p/original'+element.imgurl,element.release_date,element.rate,element.lang,element.vote_count,element.trailer,element.movieurl]
     client.query(sql1,values).then(data1 =>{
         
           }).catch(err=>{
